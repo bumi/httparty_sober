@@ -6,11 +6,15 @@ begin
   Jeweler::Tasks.new do |gem|
     gem.name = "httparty_sober"
     gem.summary = %Q{HTTParties sober. Adds api_cache to httparty}
-    gem.description = %Q{TODO: longer description of your gem}
-    gem.email = "michael@derbumi.com"
+    gem.description = %Q{Cache responses in HTTParty using APICache}
+    gem.email = "michael@railslove.com"
     gem.homepage = "http://github.com/bumi/httparty_sober"
     gem.authors = ["Michael Bumann"]
     gem.add_development_dependency "thoughtbot-shoulda", ">= 0"
+    gem.add_development_dependency "mocha"
+    gem.add_dependency "httparty"
+    gem.add_dependency "api_cache", ">=0.2.0"
+    gem.files = FileList['lib/**/*.rb', '[A-Z]*', 'test/**/*'].to_a
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new
