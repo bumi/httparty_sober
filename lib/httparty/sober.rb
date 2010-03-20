@@ -24,7 +24,8 @@ module HTTParty
       
       def get_with_caching(path, options={})
         cache_options = (@@cache_options || {}).merge(options[:cache] || {})
-        APICache.get(path,cache_options) do 
+        key = "#{path.to_s}#{options[:query].to_s}"
+        APICache.get(key,cache_options) do 
           perform_request(Net::HTTP::Get, path, options)
         end
       end

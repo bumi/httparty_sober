@@ -13,6 +13,32 @@ class TestHttpartySober < Test::Unit::TestCase
     CacheParty.cache :store => "cache_store"
   end
   
+  should "cache ;)" do
+    class CacheR
+      include HTTParty
+      include HTTParty::Sober
+    end
+    CacheR.cache!
+    CacheR.expects(:perform_request).with(Net::HTTP::Get, "url", :query => {:hallo=> "welt"}).returns("response")
+    
+    CacheR.get "url", :query =>{:hallo=> "welt"}
+    # now this must be cached
+    CacheR.get "url", :query =>{:hallo=> "welt"}
+  end
+  
+  should "use the path and the query parameters as cache key" do
+    class CacheKey
+      include HTTParty
+      include HTTParty::Sober
+    end
+    CacheKey.cache
+    url = "/params"
+    query = {:hey=> "ho", :lets => "go"}
+    key = "#{url.to_s}#{query.to_s}"
+    APICache.expects(:get).with(key,{})
+    CacheKey.get_with_caching url, {:query => query}
+  end
+  
   should "save and use default caching options" do
     options = {:cache =>123, :valid => 123}
     CacheParty.cache options
