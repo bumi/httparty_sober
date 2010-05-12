@@ -34,7 +34,8 @@ class TestHttpartySober < Test::Unit::TestCase
     CacheKey.cache
     url = "/params"
     query = {:hey=> "ho", :lets => "go"}
-    key = "#{url.to_s}#{query.to_s}"
+    
+    key = md5_key(url,query)
     APICache.expects(:get).with(key,{})
     CacheKey.get_with_caching url, {:query => query}
   end
@@ -42,7 +43,7 @@ class TestHttpartySober < Test::Unit::TestCase
   should "save and use default caching options" do
     options = {:cache =>123, :valid => 123}
     CacheParty.cache options
-    APICache.expects(:get).with("url", options)
+    APICache.expects(:get).with(md5_key("url"), options)
     CacheParty.get_with_caching "url"
   end
   
@@ -50,7 +51,7 @@ class TestHttpartySober < Test::Unit::TestCase
     should "alias get to get_with_caching" do
       klass = class OverwriteGet; include HTTParty; include HTTParty::Sober; end
       klass.cache!
-      APICache.expects(:get).with("url", {}).returns("response")
+      APICache.expects(:get).with(md5_key("url"), {}).returns("response")
       assert_equal "response", klass.get("url")
     end
   
@@ -63,4 +64,7 @@ class TestHttpartySober < Test::Unit::TestCase
     end
   end
   
+  def md5_key(url,query={})
+    Digest::MD5.hexdigest("#{url.to_s}-#{query.collect{|e| e.join("=")}.join("&")}")
+  end
 end

@@ -1,3 +1,4 @@
+require 'digest/md5'
 module HTTParty
   module Sober
     def self.included(base)
@@ -24,7 +25,8 @@ module HTTParty
       
       def get_with_caching(path, options={})
         cache_options = (@@cache_options || {}).merge(options[:cache] || {})
-        key = "#{path.to_s}#{options[:query].to_s}"
+        query = options[:query] ||= {}
+        key = Digest::MD5.hexdigest("#{path.to_s}-#{query.collect{|e| e.join("=")}.join("&")}")
         APICache.get(key,cache_options) do 
           perform_request(Net::HTTP::Get, path, options)
         end
