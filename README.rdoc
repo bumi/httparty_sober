@@ -1,6 +1,31 @@
 = httparty_sober
 
-Description goes here.
+makes you not get drunken when httpartying.
+
+== Description
+
+httparty_sober integrates mloughran's APICache into HTTParty. This allows you to easily cache your HTTP requests. 
+Have a look at the APICache readme for the cache details:
+
+http://github.com/mloughran/api_cache
+
+== Usage Example:
+
+ class CacheParty
+  include HTTParty
+  include HTTParty::Sober
+  
+  # setup APICache.
+  # the cache method accepts a :store parameter and default APICache options (like :valid, :timeout,...)
+  # you can also use the bang method cache! which overwrites the default HTTParty#get method and forces caching.
+  cache :store => Moneta::Memcache.new(:server => "localhost")
+ end
+ 
+ CacheParty.get_with_caching "/foo"
+ # get_with_caching acts like HTTParty's #get but caches the result
+
+
+
 
 == Note on Patches/Pull Requests
  
